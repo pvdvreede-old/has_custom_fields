@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130307035400) do
+ActiveRecord::Schema.define(:version => 20130307084608) do
 
   create_table "has_custom_fields_custom_field_values", :force => true do |t|
     t.integer  "custom_field_id"
@@ -28,6 +28,13 @@ ActiveRecord::Schema.define(:version => 20130307035400) do
     t.integer  "belongs_to_id"
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
+  end
+
+  create_table "item_with_dynamic_creations", :force => true do |t|
+    t.string   "a_field"
+    t.integer  "number_field"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "test_items", :force => true do |t|
