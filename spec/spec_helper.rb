@@ -18,5 +18,5 @@ RSpec.configure do |config|
   config.order = "random"
 end
 
-ActiveRecord::Base.logger = Logger.new(STDOUT) if defined?(ActiveRecord::Base)
+#ActiveRecord::Base.logger = Logger.new(STDOUT) if defined?(ActiveRecord::Base)
 

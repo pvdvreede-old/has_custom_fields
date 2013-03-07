@@ -7,6 +7,7 @@ module HasCustomFields
 
     module ClassMethods
       def has_custom_fields(options={})
+        @@custom_field_options = options
         after_initialize :init_custom_fields
         after_save :save_custom_values
         after_find :find_custom_values
@@ -71,20 +72,10 @@ module HasCustomFields
     end
 
     def method_missing(name, *args, &block)
-      if name.to_s =~ /^(.*)=$/
-        value_field = find_value_field_from_name($1)
-        unless value_field.nil?
-          value_field.value = args[0]
-        else
-          name_field = find_name_field($1)
-          return super if name_field.nil?
-          @field_values << CustomFieldValue.new(:value => args[0], :custom_field_id => name_field.id)
-          @field_values.last
-        end
+      if @@custom_field_options[:allow_dynamic_creation]
+
       else
-        value_field = find_value_field_from_name(name.to_s)
-        return super if value_field.nil?
-        value_field.field_value
+        super
       end
     end
 
