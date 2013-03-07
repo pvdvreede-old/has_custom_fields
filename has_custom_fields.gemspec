@@ -7,11 +7,11 @@ require "has_custom_fields/version"
 Gem::Specification.new do |s|
   s.name        = "has_custom_fields"
   s.version     = HasCustomFields::VERSION
-  s.authors     = ["TODO: Your name"]
-  s.email       = ["TODO: Your email"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of HasCustomFields."
-  s.description = "TODO: Description of HasCustomFields."
+  s.authors     = ["Paul Van de Vreede"]
+  s.email       = ["paul@vdvreede.net"]
+  s.homepage    = "https://github.com/pvdvreede/has_custom_fields"
+  s.summary     = "Rails plugin that gives any model the power of custom fields managed in the database."
+  s.description = "has_custom_fields makes it easy to create custom fields for any ActiveRecord model."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
