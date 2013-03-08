@@ -47,6 +47,7 @@ end
 The following options are available to be set and passed in with the `has_custom_fields` call:
 
 * :allow_dynamic_creation - Either true or false (default false). When set to true, it will allow dyanmic creation of fields by simply using the ruby method API to set one, eg. model.this_will_be_created = "hello" will create a custom field with the name "This will be created" and a value of "hello". The type of the field will be infered from the data type being set.
+* :further_filter_by - Symbol that refers to an id field on the current model. This can be used where a custom field belongs to another model but needs to be shown and edited on this model. When this is used, the `belongs_to_id` on the CustomField model must be set to the owning model's instance id.
 
 ## License
 
