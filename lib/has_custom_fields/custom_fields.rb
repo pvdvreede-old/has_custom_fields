@@ -63,7 +63,7 @@ module HasCustomFields
       if custom_field_options[:allow_dynamic_creation]
         if name =~ /^(.*)=$/
           new_field = HasCustomFields::CustomField.new(
-            :field_name => $1.to_s,
+            :field_name => $1.to_s.humanize,
             :belongs_to => self.class.name,
             :field_type => 'string' # hard coded for the time being as this is only option
           )

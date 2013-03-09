@@ -13,7 +13,7 @@ describe 'Custom field options' do
         @record.save!
         @new_field = HasCustomFields::CustomField.where(
           :belongs_to => @record.class.name,
-          :field_name => 'new_field'
+          :field_name => 'New field'
         ).first
       end
 
