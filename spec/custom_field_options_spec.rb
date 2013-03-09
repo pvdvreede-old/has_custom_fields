@@ -13,7 +13,7 @@ describe 'Custom field options' do
         @record.save!
         @new_field = HasCustomFields::CustomField.where(
           :belongs_to => @record.class.name,
-          :name => 'New field'
+          :field_name => 'new_field'
         ).first
       end
 
@@ -30,6 +30,25 @@ describe 'Custom field options' do
         value_field.should_not be_nil
       end
 
+      it 'should allow retrieval of dynamically created field' do
+        @record.new_field.should eq "new field value"
+      end
+
+      it 'should throw no method error when requesting a non existant field' do
+        expect { @record.i_dont_exist }.to raise_error NoMethodError
+      end
+
+    end
+
+    context 'disable dynamic field creation' do
+      before :each do
+        @item = FactoryGirl.create :test_item
+        @record = ::TestItem.find @item.id
+      end
+
+      it 'should raise NoMethodError when a non existant custom field is called' do
+        expect { @record.new_custom_field = "test" }.to raise_error NoMethodError
+      end
     end
   end
 
