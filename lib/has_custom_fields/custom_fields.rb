@@ -7,7 +7,14 @@ module HasCustomFields
 
     module ClassMethods
       def has_custom_fields(options={})
-        @@custom_field_options = options
+        class_attribute :custom_field_options
+
+        self.custom_field_options = {
+          :allow_dynamic_creation => false
+        }
+
+        self.custom_field_options.merge!(options)
+
         after_initialize :init_custom_fields
         after_save :save_custom_values
         after_find :find_custom_values
@@ -35,6 +42,7 @@ module HasCustomFields
     def save_custom_values
       @field_values.each do |field_value|
         if field_value.changed? || !field_value.persisted?
+          field_value.belongs_to_id = self.id
           field_value.save!
         end
       end
@@ -46,40 +54,60 @@ module HasCustomFields
         @field_values = HasCustomFields::CustomFieldValue.where(:belongs_to_id => self.id)
 
         @field_names.each do |field|
-          field_name = field.field_name.from_sentance_to_snake_case
-          define_singleton_method field_name.to_sym do
-            value_field = find_value_field(field.id)
-            return nil if value_field.nil?
-            case field.field_type
-            when 'string'
-              value_field.field_value
-            end
-          end
-
-          define_singleton_method "#{field_name}=".to_sym do |value_to_set|
-            value_field = find_value_field(field.id)
-            if value_field.nil?
-              value_field = CustomFieldValue.new(
-                :belongs_to_id => self.id,
-                :custom_field_id => field.id
-              )
-              @field_values << value_field
-            end
-            value_field.field_value = value_to_set
-          end
+          define_new_custom_field field
         end
       end
     end
 
     def method_missing(name, *args, &block)
-      if @@custom_field_options[:allow_dynamic_creation]
-
+      if custom_field_options[:allow_dynamic_creation]
+        if name =~ /^(.*)=$/
+          new_field = HasCustomFields::CustomField.new(
+            :field_name => $1.to_s,
+            :belongs_to => self.class.name,
+            :field_type => 'string' # hard coded for the time being as this is only option
+          )
+          new_field.save!
+          @field_names << new_field
+          define_new_custom_field new_field
+          new_field_value = HasCustomFields::CustomFieldValue.new(
+            :field_value => args[0],
+            :custom_field_id => new_field.id
+          )
+          @field_values << new_field_value
+        else
+          super
+        end
       else
         super
       end
     end
 
     private
+
+    def define_new_custom_field(field)
+      field_name = field.field_name.to_s.from_sentance_to_snake_case
+      define_singleton_method field_name.to_sym do
+        value_field = find_value_field(field.id)
+        return nil if value_field.nil?
+        case field.field_type
+        when 'string'
+          value_field.field_value
+        end
+      end
+
+      define_singleton_method "#{field_name}=".to_sym do |value_to_set|
+        value_field = find_value_field(field.id)
+        if value_field.nil?
+          value_field = CustomFieldValue.new(
+            :belongs_to_id => self.id,
+            :custom_field_id => field.id
+          )
+          @field_values << value_field
+        end
+        value_field.field_value = value_to_set
+      end
+    end
 
     def find_value_field(id)
       @field_values.find { |v| id == v.custom_field_id }
@@ -102,6 +130,7 @@ class String
   def from_sentance_to_snake_case
     self.gsub(/\s/, '_').downcase
   end
+
 end
 
 ActiveRecord::Base.send :include, HasCustomFields::CustomFields
