@@ -113,16 +113,6 @@ module HasCustomFields
       @field_values.find { |v| id == v.custom_field_id }
     end
 
-    def find_value_field_from_name(name)
-      name_field = find_name_field(name)
-      return nil if name_field.nil?
-      find_value_field(name_field.id)
-    end
-
-    def find_name_field(name)
-      @field_names.find { |n| n.field_name == name } unless @field_names.nil?
-    end
-
   end
 end
 

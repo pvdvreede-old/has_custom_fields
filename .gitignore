@@ -10,3 +10,5 @@ coverage/
 
 .vagrant
 Vagrantfile
+
+.DS_Store
